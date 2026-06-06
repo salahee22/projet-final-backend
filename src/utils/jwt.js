@@ -6,8 +6,8 @@ const signToken = (payload) => {
   });
 };
  
-const verifyToken = (token) => {
+const verifyTokenValue = (token) => {     
   return jwt.verify(token, process.env.JWT_SECRET || "fallback_secret");
 };
  
-module.exports = { signToken, verifyToken };
+module.exports = { signToken, verifyTokenValue }; 

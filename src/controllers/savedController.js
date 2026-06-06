@@ -74,7 +74,8 @@ class SavedController {
  
   async removeSaved(req, res, next) {
     try {
-      const { content_id, content_type } = req.query;
+      const {  content_type } = req.query;
+      const content_id = req.params.contentId;
  
       const saved = await Saved.findOneAndDelete({
         user_id: req.user._id,

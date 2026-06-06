@@ -19,12 +19,10 @@ class SubscriptionController {
   // Joueur : voir son abonnement actif
   async getMySubscription(req, res, next) {
     try {
-      const subscription = await Subscription.findOne({
-        user_id: req.user._id,
-        ends_at: { $gte: new Date() },
-      })
-        .populate("coach_id", "name email")
-        .sort({ starts_at: -1 });
+     const subscription = await Subscription.findOne({
+     user_id: req.user._id,
+     ends_at: { $gte: new Date() },
+      }).populate("coach_id", "name email");
  
       if (!subscription) {
         return res.status(200).json({ success: true, data: null, message: "No active subscription" });
