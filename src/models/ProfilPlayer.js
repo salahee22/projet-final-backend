@@ -21,6 +21,11 @@ const profilPlayerSchema = new mongoose.Schema({
     trim: true,
     default: null,
   },
+  phone: {
+    type: String,
+    trim: true,
+    default: null,
+  },
   height: {
     type: Number,
     min: 0,

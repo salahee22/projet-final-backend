@@ -4,9 +4,26 @@ const addExerciceValidator = [
   param("progId")
     .isMongoId().withMessage("Programme id must be a valid MongoDB id"),
  
-  body("exo_id")
-    .notEmpty().withMessage("exo_id is required")
-    .isMongoId().withMessage("exo_id must be a valid MongoDB id"),
+  body("name")
+    .trim()
+    .notEmpty().withMessage("name is required")
+    .isLength({ max: 200 }).withMessage("name is too long"),
+ 
+  body("sets")
+    .optional({ nullable: true })
+    .isInt({ min: 0 }).withMessage("sets must be a positive integer"),
+ 
+  body("reps")
+    .optional({ nullable: true })
+    .isString().withMessage("reps must be a string"),
+ 
+  body("rest")
+    .optional({ nullable: true })
+    .isString().withMessage("rest must be a string"),
+ 
+  body("notes")
+    .optional({ nullable: true })
+    .isString().withMessage("notes must be a string"),
  
   body("week_num")
     .notEmpty().withMessage("week_num is required")
@@ -20,6 +37,12 @@ const addExerciceValidator = [
 const updateExerciceProgValidator = [
   param("id")
     .isMongoId().withMessage("Entry id must be a valid MongoDB id"),
+ 
+  body("name").optional().trim().isLength({ max: 200 }),
+  body("sets").optional({ nullable: true }).isInt({ min: 0 }),
+  body("reps").optional({ nullable: true }).isString(),
+  body("rest").optional({ nullable: true }).isString(),
+  body("notes").optional({ nullable: true }).isString(),
  
   body("week_num")
     .optional()

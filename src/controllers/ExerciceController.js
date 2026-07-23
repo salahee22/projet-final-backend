@@ -70,62 +70,52 @@ class ExerciceController {
   }
  
   async createExercice(req, res, next) {
-    try {
-      const { title, description, category, img, video, level, is_goalkeeper, equipements } = req.body;
- 
-      const exercice = await Exercice.create({
-        author_id: req.user._id,
-        title,
-        description,
-        category,
-        img,
-        video,
-        level,
-        is_goalkeeper,
-        equipements,
-      });
- 
-      const populated = await exercice.populate("author_id", "name role");
- 
-      res.status(201).json({
-        success: true,
-        message: "Exercice created",
-        data: populated,
-      });
-    } catch (error) {
-      next(this.normalizeError(error));
-    }
+  try {
+    const {
+  name, description, objective, material, theme, age, level, type, duration, image, images, video,
+  detail_image, sections, planImages, organisation, consignes, roles, categories, subThemes,
+} = req.body;
+
+const exercice = await Exercice.create({
+  author_id: req.user.id,
+  name, description, objective, material, theme, age, level, type, duration, image, images, video,
+  detail_image, sections, planImages, organisation, consignes, roles, categories, subThemes,
+});
+
+    const populated = await exercice.populate("author_id", "name role");
+
+    res.status(201).json({ success: true, message: "Exercice created", data: populated });
+  } catch (error) {
+    next(this.normalizeError(error));
   }
+}
  
-  async updateExercice(req, res, next) {
-    try {
-      const exercice = await Exercice.findById(req.params.id);
- 
-      if (!exercice) {
-        return next(createError(404, "Exercice not found"));
-      }
- 
-      const isOwner = exercice.author_id.toString() === req.user._id.toString();
-      const isAdmin = req.user.role === "admin";
- 
-      if (!isOwner && !isAdmin) {
-        return next(createError(403, "Forbidden: you can only edit your own exercices"));
-      }
- 
-      const fields = ["title", "description", "category", "img", "video", "level", "is_goalkeeper", "equipements"];
-      const updates = {};
-      fields.forEach((f) => { if (req.body[f] !== undefined) updates[f] = req.body[f]; });
- 
-      const updated = await Exercice.findByIdAndUpdate(req.params.id, updates, {
-        new: true,
-        runValidators: true,
-      }).populate("author_id", "name role");
- 
-      res.status(200).json({ success: true, message: "Exercice updated", data: updated });
-    } catch (error) {
-      next(this.normalizeError(error));
-    }
+async updateExercice(req, res, next) {
+  try {
+    const exercice = await Exercice.findById(req.params.id);
+    if (!exercice) return next(createError(404, "Exercice not found"));
+
+    const isOwner = exercice.author_id.toString() === req.user.id.toString();
+    const isAdmin = req.user.role === "admin";
+    if (!isOwner && !isAdmin) return next(createError(403, "Forbidden: you can only edit your own exercices"));
+
+    const fields = [
+  "name", "description", "objective", "material", "theme", "age", "level", "type", "duration", "image", "images", "video",
+  "detail_image", "sections", "planImages", "organisation", "consignes", "roles", "categories", "subThemes",
+];
+    const updates = {};
+    fields.forEach((f) => { if (req.body[f] !== undefined) updates[f] = req.body[f]; });
+
+    const updated = await Exercice.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true,
+    }).populate("author_id", "name role");
+
+    res.status(200).json({ success: true, message: "Exercice updated", data: updated });
+  } catch (error) {
+    next(this.normalizeError(error));
   }
+}
  
   async deleteExercice(req, res, next) {
     try {
@@ -135,7 +125,7 @@ class ExerciceController {
         return next(createError(404, "Exercice not found"));
       }
  
-      const isOwner = exercice.author_id.toString() === req.user._id.toString();
+      const isOwner = exercice.author_id.toString() === req.user.id.toString();
       const isAdmin = req.user.role === "admin";
  
       if (!isOwner && !isAdmin) {
@@ -145,10 +135,10 @@ class ExerciceController {
       await Exercice.findByIdAndDelete(req.params.id);
  
       res.status(200).json({ success: true, message: "Exercice deleted" });
-    } catch (error) {
+    } catch (error) {    
       next(this.normalizeError(error));
-    }
-  }
-}
+    }   
+  }   
+}     
  
 module.exports = new ExerciceController();

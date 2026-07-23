@@ -4,6 +4,9 @@ const validate = require("../middlewares/validate");
 const verifyToken = require("../middlewares/verifyToken");
 const registerValidator = require("../validators/Users/registerValidator");
 const loginValidator = require("../validators/Users/loginValidator");
+const changePasswordValidator = require("../validators/Users/changePasswordValidator");
+
+
 
 const router = express.Router();
 
@@ -11,5 +14,7 @@ router.get("/", authController.getAuthStatus);
 router.post("/register", registerValidator, validate, authController.register);
 router.post("/login", loginValidator, validate, authController.login);
 router.get("/me", verifyToken, authController.getMe);
+router.put("/password", verifyToken, changePasswordValidator, validate, authController.changePassword);
+
 
 module.exports = router;

@@ -4,6 +4,7 @@ const createError = require("../utils/createError");
 class ProfilPlayerController {
   constructor() {
     this.getMyProfil = this.getMyProfil.bind(this);
+    this.getPlayerProfil = this.getPlayerProfil.bind(this);
     this.createProfil = this.createProfil.bind(this);
     this.updateProfil = this.updateProfil.bind(this);
   }
@@ -27,6 +28,21 @@ class ProfilPlayerController {
       next(this.normalizeError(error));
     }
   }
+
+  // Admin/coach : consulter le profil d'un joueur précis
+  async getPlayerProfil(req, res, next) {
+    try {
+      const profil = await ProfilPlayer.findOne({ user_id: req.params.userId }).populate("user_id", "name email role");
+
+      if (!profil) {
+        return next(createError(404, "Profil not found"));
+      }
+
+      res.status(200).json({ success: true, data: profil });
+    } catch (error) {
+      next(this.normalizeError(error));
+    }
+  }
  
   async createProfil(req, res, next) {
     try {
@@ -36,13 +52,14 @@ class ProfilPlayerController {
         return next(createError(409, "Profil already exists"));
       }
  
-      const { birth_day, position, club, height, weight, medical_info, upload_file } = req.body;
+      const { birth_day, position, club, phone, height, weight, medical_info, upload_file } = req.body;
  
       const profil = await ProfilPlayer.create({
         user_id: req.user._id,
         birth_day,
         position,
         club,
+        phone,
         height,
         weight,
         medical_info,
@@ -63,7 +80,7 @@ class ProfilPlayerController {
  
   async updateProfil(req, res, next) {
     try {
-      const fields = ["birth_day", "position", "club", "height", "weight", "medical_info", "upload_file"];
+      const fields = ["birth_day", "position", "club", "phone", "height", "weight", "medical_info", "upload_file"];
       const updates = {};
       fields.forEach((f) => { if (req.body[f] !== undefined) updates[f] = req.body[f]; });
  

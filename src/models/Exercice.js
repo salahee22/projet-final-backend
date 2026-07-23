@@ -1,52 +1,68 @@
 const mongoose = require("mongoose");
- 
+
+const textSectionSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  items: [{ type: String }],
+}, { _id: false });
+
 const exerciceSchema = new mongoose.Schema({
   author_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  title: {
+  name: { type: String, required: true, trim: true, minlength: 3, maxlength: 200 },
+  description: { type: String, required: true },
+  objective: { type: String, required: true, trim: true },
+  material: { type: String, trim: true, default: null },
+  theme: {
     type: String,
+    enum: [
+      "Passe", "Tir", "Dribble", "Conduite de balle", "Contrôle",
+      "Jeu collectif", "Vitesse", "Endurance", "Coordination",
+      "Prise de balle", "Plongeons", "Relance", "Placement", "Réflexes", "Sorties aériennes",
+    ],
     required: true,
-    trim: true,
-    minlength: 3,
-    maxlength: 200,
   },
-  description: {
+  age: {
     type: String,
+    enum: ["U7", "U9", "U11", "U13", "U15", "U17", "Senior"],
     required: true,
-  },
-  category: {
-    type: String,
-    enum: ["basic", "development", "elite", "physical", "technical", "tactical", "goalkeeping"],
-    default: "basic",
-  },
-  img: {
-    type: String,
-    default: null,
-  },
-  video: {
-    type: String,
-    default: null,
   },
   level: {
     type: String,
-    enum: ["U6-U12", "U12-U17", "senior", "elite"],
-    default: "U6-U12",
+    enum: ["Débutant", "Intermédiaire", "Avancé"],
+    default: "Débutant",
   },
-  is_goalkeeper: {
-    type: Boolean,
-    default: false,
-  },
-  equipements: {
+  type: {
     type: String,
-    default: null,
+    enum: ["field", "goalkeeper"],
+    default: "field",
   },
-  published_at: {
-    type: Date,
-    default: Date.now,
-  },
+  duration: { type: String, default: "15 min" },
+  image: { type: String, default: null },
+  images: [{ type: String }],
+  video: { type: String, default: null },
+
+  // Contenu long structuré (page détail)
+  detail_image: { type: String, default: null },
+  sections: [{
+    title: { type: String, required: true },
+    paragraphs: [{ type: String }],
+  }],
+  planImages: [{
+    id: { type: String, default: null },
+    caption: { type: String, default: null },
+    img: { type: String, default: null },
+    _id: false,
+  }],
+  organisation: textSectionSchema,
+  consignes: textSectionSchema,
+  roles: textSectionSchema,
+  categories: [{ type: String }],
+  subThemes: [{ type: String }],
+
+  published_at: { type: Date, default: Date.now },
 });
- 
+
 module.exports = mongoose.model("Exercice", exerciceSchema);

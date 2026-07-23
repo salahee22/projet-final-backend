@@ -14,6 +14,10 @@ const createProfilValidator = [
     .optional({ nullable: true })
     .trim()
     .isString().withMessage("club must be a string"),
+
+  body("phone")
+    .optional({ nullable: true })
+    .isString().withMessage("phone must be a string"),
  
   body("height")
     .optional({ nullable: true })

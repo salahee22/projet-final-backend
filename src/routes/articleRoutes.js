@@ -17,4 +17,4 @@ router.post("/", createArticleValidator, validate, articleController.createArtic
 router.put("/:id", updateArticleValidator, validate, articleController.updateArticle);
 router.delete("/:id", articleIdValidator, validate, articleController.deleteArticle);
  
-module.exports = router;
+module.exports = router;     

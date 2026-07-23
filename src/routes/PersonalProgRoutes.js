@@ -8,7 +8,12 @@ const { createProgValidator, updateProgValidator, progIdValidator } = require(".
 const router = express.Router();
  
 router.use(verifyToken);
-router.use(requireSubscription);
+router.use(requireSubscription);          
+
+
+
+  
+
  
 router.get("/", personalProgController.listMyProgs);
 router.get("/:id", progIdValidator, validate, personalProgController.getProg);

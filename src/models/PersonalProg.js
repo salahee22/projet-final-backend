@@ -28,10 +28,15 @@ const personalProgSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  rest_days: {
+  type: [Number],
+  default: [],
+},
   created_at: {
     type: Date,
     default: Date.now,
   },
+
 });
  
 module.exports = mongoose.model("PersonalProg", personalProgSchema);

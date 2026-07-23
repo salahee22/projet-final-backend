@@ -9,11 +9,12 @@ class AuthController {
     this.register = this.register.bind(this);
     this.login = this.login.bind(this);
     this.getMe = this.getMe.bind(this);
+    this.changePassword = this.changePassword.bind(this);
   }
  
   buildAuthResponse(user) {
     const token = signToken({
-      id: user._id,
+      id: user.id,
       role: user.role,
     });
  
@@ -107,6 +108,29 @@ class AuthController {
       },
     });
   }
+
+  async changePassword(req, res, next) {
+  try {
+    const { current_password, new_password } = req.body;
+
+    const user = await User.findById(req.user._id).select("+password_hash");
+    if (!user) return next(createError(404, "User not found"));
+
+    const isValid = await comparePassword(current_password, user.password_hash);
+    if (!isValid) return next(createError(401, "Current password is incorrect"));
+
+    user.password_hash = await hashPassword(new_password);
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+
+
+
 }
  
 module.exports = new AuthController();
