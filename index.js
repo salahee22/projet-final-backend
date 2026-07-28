@@ -24,24 +24,35 @@ const coachRoutes = require("./src/routes/coachRoutes");
 const eliteApplicationRoutes = require("./src/routes/eliteApplicationRoutes");
 const nutritionProgRoutes = require("./src/routes/NutritionProgRoutes");
 const sessionFeedbackRoutes = require("./src/routes/sessionFeedbackRoutes");
+const conversationRoutes = require("./src/routes/conversationRoutes");
+const availabilitySlotRoutes = require("./src/routes/availabilitySlotRoutes");
+const bookingRoutes = require("./src/routes/bookingRoutes");
+const webhookRoutes = require("./src/routes/webhookRoutes");
+const paymentRoutes = require("./src/routes/paymentRoutes");
+
 const app = express();
 
-// Middlewares globaux
+// Middlewares globaux (sans body parser pour l'instant)
 app.use(cors({
   origin: process.env.ALLOWED_ORIGIN || "http://localhost:3000",
   credentials: true,
 }));
 app.use(helmet());
 app.use(morgan("dev"));
+
+// ⚠️ WEBHOOK CHARGILY : monté AVANT express.json() global
+// car il a besoin du body brut (Buffer) pour vérifier la signature HMAC
+app.use("/api/payment/webhook", webhookRoutes);
+
+// Body parsers globaux pour tout le reste de l'app
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(requestReceived);
+
 app.use("/api/coaches", coachRoutes);
 app.use("/api/elite-applications", eliteApplicationRoutes);
 app.use("/api/session-feedback", sessionFeedbackRoutes);
-
-
 
 // Rate limiting
 const authLimiter = rateLimit({
@@ -64,9 +75,10 @@ app.use("/api/profile", profilPlayerRoutes);
 app.use("/api/saved", savedRoute);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/users", userRoutes);
-
-
-
+app.use("/api/conversations", conversationRoutes);
+app.use("/api/availability", availabilitySlotRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/payment", paymentRoutes); // create-checkout, etc.
 
 app.use(errorHandler);
 

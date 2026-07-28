@@ -1,6 +1,6 @@
 const express = require("express");
 const profilPlayerController = require("../controllers/profilPlayerController");
-const requireSubscription = require("../middlewares/requireSubscription")
+const requirePlan = require("../middlewares/requirePlan");
 const verifyToken = require("../middlewares/verifyToken");
 const authorizeRoles = require("../middlewares/authorizeRoles");
 const validate = require("../middlewares/validate");
@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/player/:userId", verifyToken, authorizeRoles("admin", "coach"), profilPlayerController.getPlayerProfil);
  
 router.use(verifyToken);
-router.use(requireSubscription);
+router.use(requirePlan("basic"));
  
 router.get("/me", profilPlayerController.getMyProfil);
 router.post("/", createProfilValidator, validate, profilPlayerController.createProfil);

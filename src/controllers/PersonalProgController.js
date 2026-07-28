@@ -17,17 +17,22 @@ class PersonalProgController {
     return error;
   }
 
-  // Le joueur voit ses propres programmes, le coach voit ceux qu'il a créés
+  // Le joueur voit ses propres programmes, le coach/admin voit ceux qu'il a créés,
+  // ou ceux d'un joueur précis s'il passe ?player_id=...
   async listMyProgs(req, res, next) {
     try {
       const isCoach = req.user.role === "coach" || req.user.role === "admin";
-      const filter = isCoach
-        ? { coach_id: req.user._id }
-        : { player_id: req.user._id };
+      let filter;
 
-      // un coach peut filtrer par joueur
       if (isCoach && req.query.player_id) {
-        filter.player_id = req.query.player_id;
+        // un coach/admin consulte les programmes d'un joueur précis
+        filter = { player_id: req.query.player_id };
+      } else if (isCoach) {
+        // un coach voit les programmes qu'il a créés
+        filter = { coach_id: req.user._id };
+      } else {
+        // le joueur voit ses propres programmes
+        filter = { player_id: req.user._id };
       }
 
       const { page, limit, skip } = getPagination(req.query);

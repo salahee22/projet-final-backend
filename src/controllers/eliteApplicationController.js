@@ -8,6 +8,7 @@ const createError = require("../utils/createError");
 const { hashPassword } = require("../utils/password");
 const { getPagination, getPaginationMeta } = require("../utils/queryHelpers");
 const chargilyClient = require("../utils/chargily");
+const { sendWelcomeEmail } = require("../utils/mailer");
 
 const PLAN_MAP = { elite1: "basic", elite2: "premium", elite3: "elite" };
 const PRICE_MAP = { elite1: 4500, elite2: 8500, elite3: 14000 };
@@ -110,11 +111,11 @@ class EliteApplicationController {
     const existingProfil = await ProfilPlayer.findOne({ user_id: user._id });
     if (!existingProfil) {
       await ProfilPlayer.create({
-  user_id: user._id,
-  position: application.poste,
-  club: application.club || null,
-  phone: application.telephone || null,
-});
+        user_id: user._id,
+        position: application.poste,
+        club: application.club || null,
+        phone: application.telephone || null,
+      });
     }
 
     const startsAt = new Date();
@@ -131,10 +132,24 @@ class EliteApplicationController {
 
     application.status = "acceptee";
     application.payment_status = "paye";
+    if (tempPassword) {
+      application.temp_password = tempPassword;
+    }
     await application.save();
 
-    // TODO: envoyer tempPassword au joueur par email/SMS ici si tu ajoutes un service d'envoi
-    console.log(`Compte activé pour ${application.email}, mot de passe temporaire: ${tempPassword || "(compte existant)"}`);
+    // Envoie l'email avec les identifiants si c'est un nouveau compte
+    if (tempPassword) {
+      try {
+        await sendWelcomeEmail({
+          to: application.email,
+          name: `${application.prenom} ${application.nom}`,
+          tempPassword,
+        });
+      } catch (emailError) {
+        console.error("Erreur envoi email:", emailError.message);
+        // On ne bloque pas l'activation du compte si l'email échoue
+      }
+    }
   }
 
   async listApplications(req, res, next) {

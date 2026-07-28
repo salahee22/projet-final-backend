@@ -1,6 +1,6 @@
 const express = require("express");
 const performanceRecordController = require("../controllers/performanceRecordController");
-const requireSubscription = require("../middlewares/requireSubscription")
+const requirePlan = require("../middlewares/requirePlan");
 const verifyToken = require("../middlewares/verifyToken");
 const validate = require("../middlewares/validate");
 const { createRecordValidator, updateRecordValidator, recordIdValidator } = require("../validators/Prog/PerformanceRecordValidator");
@@ -8,7 +8,7 @@ const { createRecordValidator, updateRecordValidator, recordIdValidator } = requ
 const router = express.Router();
  
 router.use(verifyToken);
-router.use(requireSubscription);   
+router.use(requirePlan("premium"));
  
 router.get("/", performanceRecordController.listRecords);
 router.get("/:id", recordIdValidator, validate, performanceRecordController.getRecord);

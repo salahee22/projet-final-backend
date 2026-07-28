@@ -1,5 +1,6 @@
 const NutritionProg = require("../models/NutritionProg");
 const PersonalProg = require("../models/PersonalProg");
+const Subscription = require("../models/Subscription");
 const createError = require("../utils/createError");
 
 class NutritionProgController {
@@ -28,6 +29,18 @@ class NutritionProgController {
     return { prog, isCoach, isAdmin };
   }
 
+  // Vérifie que le joueur ciblé par ce programme a bien un abonnement Elite 2 ou Elite 3
+  async checkPlayerPlan(playerId) {
+    const sub = await Subscription.findOne({
+      user_id: playerId,
+      ends_at: { $gte: new Date() },
+    });
+
+    if (!sub || sub.plan_name === "basic") {
+      throw createError(403, "La nutrition est réservée aux joueurs Elite 2 et Elite 3");
+    }
+  }
+
   async listNutritionOfProg(req, res, next) {
     try {
       await this.checkProgAccess(req.params.progId, req.user._id, req.user.role);
@@ -46,11 +59,14 @@ class NutritionProgController {
 
   async addNutritionToProg(req, res, next) {
     try {
-      const { isCoach, isAdmin } = await this.checkProgAccess(req.params.progId, req.user._id, req.user.role);
+      const { prog, isCoach, isAdmin } = await this.checkProgAccess(req.params.progId, req.user._id, req.user.role);
 
       if (!isCoach && !isAdmin) {
         return next(createError(403, "Only the coach can add nutrition entries"));
       }
+
+      // Un coach/admin ne peut ajouter de nutrition que pour un joueur Elite 2+
+      await this.checkPlayerPlan(prog.player_id);
 
       const { meal_type, content, week_num, day_num } = req.body;
 

@@ -1,7 +1,7 @@
 const { ChargilyClient } = require("@chargily/chargily-pay");
 
 const client = new ChargilyClient({
-  api_key: process.env.CHARGILY_API_KEY,
+  api_key: process.env.CHARGILY_API_SECRET,
   mode: process.env.CHARGILY_MODE || "test",
 });
 

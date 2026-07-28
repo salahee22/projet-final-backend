@@ -27,6 +27,10 @@ const eliteApplicationSchema = new mongoose.Schema({
   enum: ["en_attente", "paye", "echoue", "annule", "expire"],
   default: "en_attente",
 },
+temp_password: {
+  type: String,
+  default: null,
+},
 });
 
 module.exports = mongoose.model("EliteApplication", eliteApplicationSchema);
