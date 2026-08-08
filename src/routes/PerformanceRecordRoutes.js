@@ -1,5 +1,5 @@
 const express = require("express");
-const performanceRecordController = require("../controllers/performanceRecordController");
+const performanceRecordController = require("../controllers/PerformanceRecordController");
 const requirePlan = require("../middlewares/requirePlan");
 const verifyToken = require("../middlewares/verifyToken");
 const validate = require("../middlewares/validate");

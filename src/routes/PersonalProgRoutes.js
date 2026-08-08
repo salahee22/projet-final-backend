@@ -1,5 +1,5 @@
 const express = require("express");
-const personalProgController = require("../controllers/personalProgController");
+const personalProgController = require("../controllers/PersonalProgController");
 const verifyToken = require("../middlewares/verifyToken");
 const validate = require("../middlewares/validate");
 const requirePlan = require("../middlewares/requirePlan");

@@ -1,5 +1,5 @@
 const express = require("express");
-const exerciceProgController = require("../controllers/exerciceProgController");
+const exerciceProgController = require("../controllers/ExerciceProgController");
 const verifyToken = require("../middlewares/verifyToken");
 const validate = require("../middlewares/validate");
 const { addExerciceValidator, updateExerciceProgValidator, exerciceProgIdValidator } = require("../validators/Prog/ExerciceProgValidator");

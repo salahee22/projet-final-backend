@@ -1,10 +1,10 @@
 const express = require("express");
-const exerciceController = require("../controllers/exerciceController");
+const exerciceController = require("../controllers/ExerciceController");
 const verifyToken = require("../middlewares/verifyToken");
 const validate = require("../middlewares/validate");
-const exerciceIdValidator = require("../validators/Exercices/exerciceIdValidator");
-const createExerciceValidator = require("../validators/Exercices/createExerciceValidator");
-const updateExerciceValidator = require("../validators/Exercices/updateExerciceValidator");
+const exerciceIdValidator = require("../validators/Exercices/ExerciceIdValidator");
+const createExerciceValidator = require("../validators/Exercices/CreateExerciceValidator");
+const updateExerciceValidator = require("../validators/Exercices/UpdateExerciceValidator");
  
 const router = express.Router();
  

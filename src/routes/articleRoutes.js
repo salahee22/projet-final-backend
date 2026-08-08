@@ -1,10 +1,10 @@
 const express = require("express");
-const articleController = require("../controllers/articleController");
+const articleController = require("../controllers/ArticleController");
 const verifyToken = require("../middlewares/verifyToken");
 const validate = require("../middlewares/validate");
-const articleIdValidator = require("../validators/Articles/articleIdValidator");
-const createArticleValidator = require("../validators/Articles/createArticleValidator");
-const updateArticleValidator = require("../validators/Articles/updateArticleValidator");
+const articleIdValidator = require("../validators/Articles/ArticleidValidator");
+const createArticleValidator = require("../validators/Articles/CreateArticleValidator");
+const updateArticleValidator = require("../validators/Articles/UpdateArticleValidator");
  
 const router = express.Router();
  
