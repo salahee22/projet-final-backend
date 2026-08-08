@@ -1,10 +1,29 @@
 const mongoose = require("mongoose");
-
+ 
 const textSectionSchema = new mongoose.Schema({
   title: { type: String, required: true },
   items: [{ type: String }],
 }, { _id: false });
-
+ 
+const planImageSchema = new mongoose.Schema({
+  id: { type: String, default: null },
+  caption: { type: String, default: null },
+  img: { type: String, default: null },
+}, { _id: false });
+ 
+// NOUVEAU : un "bloc" = un mini sous-exercice indépendant à l'intérieur d'une même page.
+// Chaque bloc a son propre titre, sa propre image/vidéo (optionnelles) et ses propres
+// organisation / consignes / rôles. Ça permet de mettre plusieurs exercices sur une seule page.
+const blocSchema = new mongoose.Schema({
+  title: { type: String, trim: true, default: null },
+  image: { type: String, default: null },
+  video: { type: String, default: null },
+  planImages: [planImageSchema],
+  organisation: textSectionSchema,
+  consignes: textSectionSchema,
+  roles: textSectionSchema,
+}, { _id: false });
+ 
 const exerciceSchema = new mongoose.Schema({
   author_id: {
     type: mongoose.Schema.Types.ObjectId,
@@ -43,26 +62,28 @@ const exerciceSchema = new mongoose.Schema({
   image: { type: String, default: null },
   images: [{ type: String }],
   video: { type: String, default: null },
-
+ 
   // Contenu long structuré (page détail)
   detail_image: { type: String, default: null },
   sections: [{
     title: { type: String, required: true },
     paragraphs: [{ type: String }],
   }],
-  planImages: [{
-    id: { type: String, default: null },
-    caption: { type: String, default: null },
-    img: { type: String, default: null },
-    _id: false,
-  }],
+ 
+  // NOUVEAU : plusieurs exercices (blocs) sur une même page
+  blocs: [blocSchema],
+ 
+  // Anciens champs conservés pour compatibilité avec les exercices créés avant les blocs.
+  // Le nouveau formulaire n'écrit plus dedans, mais on garde la lecture possible.
+  planImages: [planImageSchema],
   organisation: textSectionSchema,
   consignes: textSectionSchema,
   roles: textSectionSchema,
+ 
   categories: [{ type: String }],
   subThemes: [{ type: String }],
-
+ 
   published_at: { type: Date, default: Date.now },
 });
-
+ 
 module.exports = mongoose.model("Exercice", exerciceSchema);
