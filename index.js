@@ -33,12 +33,27 @@ const paymentRoutes = require("./src/routes/paymentRoutes");
 const app = express();
 
 // Middlewares globaux (sans body parser pour l'instant)
+// Remplace ton bloc cors() actuel par celui-ci
+const allowedOrigins = [
+  process.env.ALLOWED_ORIGIN,
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGIN || "http://localhost:3000",
+  origin: function (origin, callback) {
+    // Autorise les requêtes sans origin (Postman, curl, apps mobiles...)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("CORS blocked origin:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }));
-app.use(helmet());
-app.use(morgan("dev"));
 
 // ⚠️ WEBHOOK CHARGILY : monté AVANT express.json() global
 // car il a besoin du body brut (Buffer) pour vérifier la signature HMAC
